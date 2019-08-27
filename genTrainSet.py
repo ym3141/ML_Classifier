@@ -28,6 +28,6 @@ def artSamples(oriSamples):
     return allSamples
 
 #%%
-copySamples('./trainingSet', 60)
+# copySamples('./trainingSet', 60)
 
 #%%
