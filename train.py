@@ -26,7 +26,6 @@ allSamples =np.array([img for img in artSamples(oriSamples)])
 allTruths = np.repeat(groundtruth, 4)
 
 normedSamples = (allSamples - allSamples.mean(0)) / allSamples.max()
-np.save('./savedModels/normFactors', np.array([allSamples.mean(0), allSamples.max()]))
 
 trainTruths = allTruths[0 : -100]
 trainNormedSamples = normedSamples[0 : -100]
@@ -57,6 +56,7 @@ model.summary()
 timeStampCur = datetime.now().timestamp()
 with open('./savedModels/modelArch_{0}.json'.format(timeStampCur), 'w+') as f:
     f.write(model.to_json())
+np.save('./savedModels/normFactors_{0}.npy'.format(timeStampCur), np.array([allSamples.mean(0), allSamples.max()]))
 
 earlyS = EarlyStopping(monitor='val_acc', patience=5, verbose=0, mode='max')
 modelC = ModelCheckpoint('./savedModels/modelWeights_{0}.h5'.format(timeStampCur), 
