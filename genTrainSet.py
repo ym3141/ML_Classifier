@@ -28,6 +28,9 @@ def artSamples(oriSamples):
     return allSamples
 
 #%%
-# copySamples('./trainingSet', 60)
+if __name__ == '__main__':
+    copySamples('./trainingSet', 100)
+
+
 
 #%%
