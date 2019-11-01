@@ -32,7 +32,7 @@ def artSamples(oriSamples):
     return allSamples
 
 
-# Load ground truth from a certain dir, returns a array of TrueOrFalse, and a array of images, unshuffled
+# Load ground truth from a certain dir, returns a array of TrueOrFalse, and a array of images, shuffled
 def loadGT(tsDir):
     trueSamples = []
     for imgName in listdir('{0}/True/'.format(tsDir)):
@@ -47,8 +47,13 @@ def loadGT(tsDir):
 
     truthArr = [True] * len(trueSamples) + [False] * len(falseSamples)
     smpArr = trueSamples + falseSamples
+    zipped = list(zip(truthArr, smpArr))
+    
+    np.random.shuffle(zipped)
 
-    return truthArr, smpArr
+    truthArr, smpArr = zip(*zipped)
+    
+    return list(truthArr), list(smpArr)
 
 
 #%%
