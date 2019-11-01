@@ -7,31 +7,25 @@ from keras.layers import Conv2D, MaxPooling2D, Flatten
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
 from os import listdir
-from genTrainSet import artSamples
+from genTrainSet import artSamples, loadGT
 from PIL import Image
 from datetime import datetime
 
 #%%
-groundtruth = pd.read_excel('./trainingSet/groundTruth.xlsx', header=None)
-groundtruth = np.array(groundtruth).flatten()
+testNum = 3
 
-oriSamples = []
-for idx in range(len(groundtruth)):
-    img = Image.open('{0}/trainSample_{1:03d}.tiff'.format('./trainingSet', idx))
-    # img = img.resize((640, 480))
-    imgArr = np.array(img)
-    oriSamples.append(imgArr[:, :, np.newaxis])
+truthArr, imgArr = loadGT('./TrainingSets/TS2') 
 
-allSamples =np.array([img for img in artSamples(oriSamples)])
-allTruths = np.repeat(groundtruth, 4)
+allSamples =np.array([img for img in artSamples(imgArr)])[:, :, :, np.newaxis]
+allTruths = np.repeat(truthArr, 4)
 
 normedSamples = (allSamples - allSamples.mean(0)) / allSamples.max()
 
-trainTruths = allTruths[0 : -100]
-trainNormedSamples = normedSamples[0 : -100]
+trainTruths = allTruths[0 : - testNum * 4]
+trainNormedSamples = normedSamples[0 : - testNum * 4]
 
-testTruths = allTruths[-100 : ]
-testNormedSamples = normedSamples[-100 : ]
+testTruths = allTruths[- testNum * 4 : ]
+testNormedSamples = normedSamples[- testNum * 4 : ]
 
 #%%
 model = Sequential()
@@ -68,3 +62,6 @@ history = model.fit(trainNormedSamples, trainTruths, epochs=30,
 
 loss, accu = model.evaluate(testNormedSamples, testTruths)
 print('Evaluation result:\nLoss: {0:.5f}   Accuracy: {1:.3f}'.format(loss, accu))
+
+
+# %%
