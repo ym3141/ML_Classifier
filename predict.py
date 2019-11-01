@@ -20,7 +20,8 @@ if __name__ == '__main__':
 
     letter2num = dict(zip([chr(a) for a in range(65, 91)], (range(24))))
     modelRE = re.compile(r'modelArch_(\d+.\d+).json')
-    normFactor = np.load('./savedModels/normFactors.npy')
+
+    # Find the string for the latest model
     latestTS = 0
     latestTS_str = '0'
     for savedModel in listdir('./savedModels/'):
@@ -30,12 +31,18 @@ if __name__ == '__main__':
             if TS > latestTS:
                 latestTS = TS
                 latestTS_str = TS_str
+
+    # Load latest model archetecture, weight, and normalization factor
+    print('Loading parameters and model')
+
     with open('./savedModels/modelArch_{0}.json'.format(latestTS_str)) as f:
         latestModel = model_from_json(f.read())
 
     latestModel.load_weights('./savedModels/modelWeights_{0}.h5'.format(latestTS_str))
+
+    normFactor = np.load('./savedModels/normFactors_{0}.npy'.format(latestTS_str))
 #%%
-    wellPosRe = re.compile(r'\d{8}_[a-zA-Z0-9]+_([A-P])(\d{2})_1.tif')
+    wellPosRe = re.compile(r'\d{8}_[a-zA-Z0-9]+_[a-zA-Z0-9]*_?([A-P])(\d{2})_1.tif')
 
     posList = []
     imgArrSet = []

@@ -12,7 +12,7 @@ from PIL import Image
 from datetime import datetime
 
 #%%
-testNum = 3
+testNum = 4
 
 truthArr, imgArr = loadGT('./TrainingSets/TS2') 
 
@@ -52,9 +52,9 @@ with open('./savedModels/modelArch_{0}.json'.format(timeStampCur), 'w+') as f:
     f.write(model.to_json())
 np.save('./savedModels/normFactors_{0}.npy'.format(timeStampCur), np.array([allSamples.mean(0), allSamples.max()]))
 
-earlyS = EarlyStopping(monitor='val_acc', patience=5, verbose=0, mode='max')
+earlyS = EarlyStopping(monitor='val_loss', patience=5, verbose=0, mode='min')
 modelC = ModelCheckpoint('./savedModels/modelWeights_{0}.h5'.format(timeStampCur), 
-                         save_best_only=True, monitor='val_acc', mode='max')
+                         save_best_only=True, monitor='val_loss', mode='min')
 
 history = model.fit(trainNormedSamples, trainTruths, epochs=30, 
                     callbacks=[earlyS, modelC],
